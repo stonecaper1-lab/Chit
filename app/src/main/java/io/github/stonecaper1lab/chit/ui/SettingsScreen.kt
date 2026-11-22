@@ -1,6 +1,9 @@
 package io.github.stonecaper1lab.chit.ui
 
+import android.Manifest
 import android.app.KeyguardManager
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,6 +52,9 @@ fun SettingsScreen(vm: NotesViewModel) {
     val folderLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocumentTree(),
     ) { uri -> if (uri != null) vm.setMirrorFolder(uri) }
+    val notifLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { }
 
     Scaffold { pad ->
         Column(
@@ -123,9 +129,39 @@ fun SettingsScreen(vm: NotesViewModel) {
                 )
             }
 
+            SectionTitle("Updates")
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text("Check for updates daily")
+                    Text(
+                        "Off by default. Only contacts github.com to read the latest release. Tap the notification to download.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                Switch(
+                    checked = vm.updateCheck,
+                    onCheckedChange = { on ->
+                        if (on && Build.VERSION.SDK_INT >= 33 &&
+                            context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+                            PackageManager.PERMISSION_GRANTED
+                        ) {
+                            notifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                        vm.changeUpdateCheck(on)
+                    },
+                )
+            }
+            OutlinedButton(
+                onClick = { vm.checkUpdatesNow() },
+                modifier = Modifier.padding(horizontal = 16.dp),
+            ) { Text("Check now") }
+
             SectionTitle("About")
             Text(
-                "Chit is free software (GPL-3.0-or-later). No ads, no trackers, and no internet permission.",
+                "Chit is free software (GPL-3.0-or-later). No ads and no trackers. The only network use is the optional update check, which is off by default.",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp),
             )

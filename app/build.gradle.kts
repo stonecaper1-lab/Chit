@@ -9,12 +9,27 @@ android {
     namespace = "io.github.stonecaper1lab.chit"
     compileSdk = 35
 
+    // Size: only English resources from libraries, drop metadata that apps never read.
+    androidResources {
+        localeFilters += "en"
+    }
+    packaging {
+        resources {
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/*.version",
+                "/kotlin/**",
+                "/DebugProbesKt.bin",
+            )
+        }
+    }
+
     defaultConfig {
         applicationId = "io.github.stonecaper1lab.chit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.9.0"
+        versionCode = 3
+        versionName = "0.9.1"
     }
 
     val keystorePath: String? = System.getenv("KEYSTORE_PATH")

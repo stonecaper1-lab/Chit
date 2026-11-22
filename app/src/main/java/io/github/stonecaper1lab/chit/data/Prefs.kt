@@ -12,4 +12,12 @@ class Prefs(context: Context) {
     var mirrorUri: String?
         get() = sp.getString("mirror", null)
         set(v) = sp.edit().putString("mirror", v).apply()
+
+    var updateCheck: Boolean
+        get() = sp.getBoolean("update_check", false)
+        set(v) = sp.edit().putBoolean("update_check", v).apply()
+
+    var lastNotifiedTag: String?
+        get() = sp.getString("last_tag", null)
+        set(v) = sp.edit().putString("last_tag", v).apply()
 }

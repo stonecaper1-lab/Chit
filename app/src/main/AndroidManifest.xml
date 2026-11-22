@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Chit never touches the network. Strip INTERNET even if a library asks for it. -->
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <!-- Network is used ONLY for the optional update check (off by default). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <application
         android:name=".ChitApp"
@@ -26,6 +31,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
 
         <receiver
@@ -38,5 +48,14 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/quick_add_widget_info" />
         </receiver>
+
+        <receiver
+            android:name=".update.UpdateReceiver"
+            android:exported="false" />
+
+        <service
+            android:name=".update.UpdateJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

@@ -16,6 +16,8 @@ import io.github.stonecaper1lab.chit.ChitApp
 import io.github.stonecaper1lab.chit.data.Backup
 import io.github.stonecaper1lab.chit.data.FolderMirror
 import io.github.stonecaper1lab.chit.data.Note
+import io.github.stonecaper1lab.chit.update.Updater
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -226,6 +228,32 @@ class NotesViewModel(private val app: ChitApp) : ViewModel() {
     fun updateLock(v: Boolean) {
         prefs.lockEnabled = v
         lockEnabled = v
+    }
+
+    var updateCheck by mutableStateOf(prefs.updateCheck)
+        private set
+
+    fun changeUpdateCheck(on: Boolean) {
+        prefs.updateCheck = on
+        updateCheck = on
+        if (on) Updater.ensureScheduled(app) else Updater.cancel(app)
+    }
+
+    fun checkUpdatesNow() {
+        viewModelScope.launch {
+            message = "Checking for updates..."
+            message = runCatching { withContext(Dispatchers.IO) { Updater.check(app) } }.fold(
+                onSuccess = { info ->
+                    if (info == null) {
+                        "Chit is up to date"
+                    } else {
+                        Updater.notify(app, info)
+                        "Update ${info.tag} available. Tap the notification to download."
+                    }
+                },
+                onFailure = { "Update check failed: ${it.message}" },
+            )
+        }
     }
 
     fun exportBackup(uri: Uri) {

@@ -72,6 +72,10 @@ class MainActivity : ComponentActivity() {
                 )
             }
             QuickAddWidget.ACTION_NEW -> vm.openNote(0)
+            Intent.ACTION_PROCESS_TEXT -> {
+                val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString().orEmpty()
+                if (text.isNotBlank()) vm.openNote(0, "", text)
+            }
         }
     }
 

@@ -11,10 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -86,10 +87,13 @@ fun ListScreen(vm: NotesViewModel, kind: Kind) {
     Scaffold(
         floatingActionButton = {
             if (kind == Kind.NOTES) {
-                FloatingActionButton(
+                LargeFloatingActionButton(
                     onClick = { vm.openNote(0) },
+                    shape = RoundedCornerShape(28.dp),
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.semantics { contentDescription = "New note" },
-                ) { Text("+", style = MaterialTheme.typography.headlineMedium) }
+                ) { Text("+", style = MaterialTheme.typography.displaySmall) }
             }
         },
     ) { pad ->
@@ -136,13 +140,14 @@ fun ListScreen(vm: NotesViewModel, kind: Kind) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(emptyText) }
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(12.dp, 4.dp, 12.dp, 88.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(16.dp, 4.dp, 16.dp, 128.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(notes, key = { it.id }) { n ->
                         NoteCard(
                             note = n,
                             onClick = if (kind != Kind.TRASH) ({ vm.openNote(n.id) }) else null,
+                            modifier = Modifier.animateItem(),
                         ) {
                             if (kind == Kind.TRASH) {
                                 Row {

@@ -1,7 +1,15 @@
 package io.github.stonecaper1lab.chit.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -25,17 +33,40 @@ fun ChitRoot(vm: NotesViewModel, onUnlock: () -> Unit) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text("Chit is locked", style = MaterialTheme.typography.headlineSmall)
-                    Spacer(Modifier.height(16.dp))
-                    Button(onClick = onUnlock) { Text("Unlock") }
+                    Text("Chit", style = MaterialTheme.typography.displaySmall)
+                    Text("Locked", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(24.dp))
+                    Button(
+                        onClick = onUnlock,
+                        modifier = Modifier.height(56.dp),
+                        contentPadding = PaddingValues(horizontal = 32.dp),
+                    ) { Text("Unlock", style = MaterialTheme.typography.labelLarge) }
                 }
             } else {
-                when (vm.screen) {
-                    Screen.Notes -> ListScreen(vm, Kind.NOTES)
-                    Screen.Archive -> ListScreen(vm, Kind.ARCHIVE)
-                    Screen.Trash -> ListScreen(vm, Kind.TRASH)
-                    Screen.Settings -> SettingsScreen(vm)
-                    is Screen.Editor -> EditorScreen(vm)
+                // Expressive motion: springy scale-and-fade between screens.
+                AnimatedContent(
+                    targetState = vm.screen,
+                    transitionSpec = {
+                        val enter = fadeIn(spring(stiffness = Spring.StiffnessMediumLow)) +
+                            scaleIn(
+                                initialScale = 0.94f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioLowBouncy,
+                                    stiffness = Spring.StiffnessMediumLow,
+                                ),
+                            )
+                        enter togetherWith fadeOut(spring(stiffness = Spring.StiffnessMedium))
+                    },
+                    contentKey = { if (it is Screen.Editor) "editor" else it },
+                    label = "screen",
+                ) { screen ->
+                    when (screen) {
+                        Screen.Notes -> ListScreen(vm, Kind.NOTES)
+                        Screen.Archive -> ListScreen(vm, Kind.ARCHIVE)
+                        Screen.Trash -> ListScreen(vm, Kind.TRASH)
+                        Screen.Settings -> SettingsScreen(vm)
+                        is Screen.Editor -> EditorScreen(vm)
+                    }
                 }
             }
         }

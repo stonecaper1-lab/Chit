@@ -26,8 +26,8 @@ android {
         minSdk = 26
         resourceConfigurations += "en"
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.9.1"
+        versionCode = 5
+        versionName = "0.9.3"
     }
 
     val keystorePath: String? = System.getenv("KEYSTORE_PATH")

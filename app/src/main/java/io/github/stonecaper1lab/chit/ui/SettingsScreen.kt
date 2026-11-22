@@ -2,7 +2,9 @@ package io.github.stonecaper1lab.chit.ui
 
 import android.Manifest
 import android.app.KeyguardManager
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -42,6 +44,12 @@ fun SettingsScreen(vm: NotesViewModel) {
     BackHandler { vm.go(Screen.Notes) }
     val context = LocalContext.current
     val keyguard = remember { context.getSystemService(KeyguardManager::class.java) }
+    val version = remember {
+        runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: ""
+    }
+    fun openUrl(url: String) {
+        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+    }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/zip"),
@@ -161,10 +169,35 @@ fun SettingsScreen(vm: NotesViewModel) {
 
             SectionTitle("About")
             Text(
-                "Chit is free software (GPL-3.0-or-later). No ads and no trackers. The only network use is the optional update check, which is off by default.",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp),
+                "Chit $version",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 0.dp),
             )
+            Text(
+                "A tiny note-taking app that takes notes. Revolutionary, we know.",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp, 4.dp, 16.dp, 8.dp),
+            )
+            Text(
+                "• No ads, no trackers, no accounts, no \"engagement metrics\".\n" +
+                    "• Your notes live on this phone as plain Markdown you can export any time.\n" +
+                    "• The only network use is the optional update check, off by default.\n" +
+                    "• Free software under GPL-3.0-or-later. Read it, fork it, fix it.\n" +
+                    "• Built with AI assistance (Claude), then tested and published by a human.",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Row(
+                Modifier.padding(16.dp),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+            ) {
+                OutlinedButton(onClick = { openUrl("https://github.com/stonecaper1-lab/Chit") }) {
+                    Text("Source code")
+                }
+                OutlinedButton(onClick = { openUrl("https://github.com/stonecaper1-lab/Chit/issues") }) {
+                    Text("Report a bug")
+                }
+            }
         }
     }
 }

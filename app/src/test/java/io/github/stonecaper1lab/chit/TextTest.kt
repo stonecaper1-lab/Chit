@@ -25,7 +25,8 @@ class TextTest {
     @Test
     fun recoversTitlesFromFileNames() {
         assertEquals("shopping list", titleFromFileName("notes/shopping-list-12.md"))
-        assertEquals("Imported note", titleFromFileName("12.md"))
+        assertEquals("12", titleFromFileName("12.md"))
+        assertEquals("Imported note", titleFromFileName("-5.md"))
     }
 
     @Test

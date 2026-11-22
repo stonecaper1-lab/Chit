@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Chit</string>
+    <string name="widget_label">+ New note</string>
+    <string name="widget_desc">Tap to start a new note</string>
+</resources>

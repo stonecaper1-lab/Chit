@@ -7,6 +7,8 @@ A tiny, free, open-source notes app for Android. Your thoughts stay on your devi
 - Optional update check is off by default
 - Supports checklists and Markdown
 
+Status: 0.9.4 (pre-release).
+
 ## Website
 
 Visit the [Chit website](https://stonecaper1-lab.github.io/Chit/) for the short version. Its static site source lives in [`site/`](site/).

@@ -223,7 +223,7 @@ class NotesViewModel(private val app: ChitApp) : ViewModel() {
         private set
     var locked by mutableStateOf(prefs.lockEnabled)
 
-    fun setLockEnabled(v: Boolean) {
+    fun updateLock(v: Boolean) {
         prefs.lockEnabled = v
         lockEnabled = v
     }

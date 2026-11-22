@@ -77,7 +77,7 @@ fun SettingsScreen(vm: NotesViewModel) {
                         if (on && !keyguard.isDeviceSecure) {
                             vm.message = "Set a screen lock in system settings first"
                         } else {
-                            vm.setLockEnabled(on)
+                            vm.updateLock(on)
                         }
                     },
                 )

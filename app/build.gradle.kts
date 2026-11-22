@@ -10,9 +10,6 @@ android {
     compileSdk = 35
 
     // Size: only English resources from libraries, drop metadata that apps never read.
-    androidResources {
-        localeFilters += "en"
-    }
     packaging {
         resources {
             excludes += setOf(
@@ -27,6 +24,7 @@ android {
     defaultConfig {
         applicationId = "io.github.stonecaper1lab.chit"
         minSdk = 26
+        resourceConfigurations += "en"
         targetSdk = 35
         versionCode = 3
         versionName = "0.9.1"
